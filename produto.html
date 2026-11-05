@@ -445,9 +445,6 @@
         let taxaUrgencia = 0;
         let bairroEncontrado = "";
 
-        // --- SISTEMA DE REGRAS DE DATA/HORA E URGÊNCIA ---
-       // --- SISTEMA DE REGRAS DE DATA/HORA E URGÊNCIA ---
-       // --- FUNÇÃO ANTI-BUG DO SAFARI/CELULAR ---
         function formatarDataLocal(dataObj) {
             let ano = dataObj.getFullYear();
             let mes = String(dataObj.getMonth() + 1).padStart(2, '0');
@@ -455,7 +452,6 @@
             return `${ano}-${mes}-${dia}`;
         }
 
-        // --- SISTEMA DE REGRAS DE DATA/HORA E URGÊNCIA ---
         window.onload = function() {
             const inputData = document.getElementById('data-entrega');
             const agora = new Date();
@@ -492,20 +488,17 @@
                 }
             }
             if (typeof atualizarTotal === "function") atualizarTotal();
-            if (typeof atualizarTotalBase === "function") atualizarTotalBase();
         }
 
-        // --- ABRIR RESUMO E VALIDAÇÕES RÍGIDAS ---
         function abrirResumo() {
-            // Se estiver na personalizada, checa a quantidade de itens
             if (document.querySelectorAll('.check-item').length > 0) {
                 const qtdItens = document.querySelectorAll('.check-item:checked').length;
                 if (qtdItens === 0) { alert("Escolha pelo menos 1 item para sua cesta!"); return; }
             }
 
-            const compNome = document.getElementById('comprador-nome').value;
-            const recNome = document.getElementById('recebedor-nome').value;
-            const numero = document.getElementById('end-numero').value;
+            const compNome = document.getElementById('comprador-nome').value.trim();
+            const recNome = document.getElementById('recebedor-nome').value.trim();
+            const numero = document.getElementById('end-numero').value.trim();
             
             if (!compNome) { alert("Preencha seu nome."); return; }
             if (!recNome) { alert("Preencha o nome de quem vai receber."); return; }
@@ -516,37 +509,41 @@
             if(!dataEntregaStr) { alert("Por favor, selecione a data de entrega."); return; }
             
             const horaEntrega = document.getElementById('hora-entrega').value;
-            if (!horaEntrega || horaEntrega < "07:00" || horaEntrega > "18:00") { 
-                alert("⏰ Por favor, selecione um horário válido de entrega entre 07:00 e 18:00."); 
-                return; 
-            }
-
-            // --- VALIDAÇÕES MATEMÁTICAS BLINDADAS ---
-            const agora = new Date();
-            const horaAtual = agora.getHours();
-            
-            let dataHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
-            let dataAmanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
-
-            let partesData = dataEntregaStr.split('-');
-            let dataSelecionada = new Date(partesData[0], partesData[1] - 1, partesData[2]);
-
-            // TRAVA 1: Impede pedido para o mesmo dia ou no passado (burlar o calendário)
-            if (dataSelecionada.getTime() <= dataHoje.getTime()) {
-                alert("📅 Não fazemos entregas no mesmo dia. A entrega deve ser agendada no mínimo para amanhã.");
+            if (!horaEntrega) {
+                alert("⏰ Por favor, selecione a faixa de horário de entrega desejada.");
                 return;
             }
 
-            // TRAVA 2: Passou das 18h, tentou pedir pra amanhã e não marcou urgência
-            if (horaAtual >= 18 && dataSelecionada.getTime() === dataAmanha.getTime()) {
-                let checkUrgencia = document.getElementById('check-urgencia');
-                if (!checkUrgencia || !checkUrgencia.checked) {
-                    alert("🚨 ATENÇÃO: Já passou das 18:00!\nPara entregas no dia de amanhã, você precisa marcar a 'Taxa de Urgência'.\nMarque a caixinha vermelha de urgência ou mude a data para depois de amanhã.");
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            
+            const dataHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+            const dataAmanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
+
+            const partesData = dataEntregaStr.split('-');
+            const dataSelecionada = new Date(Number(partesData[0]), Number(partesData[1]) - 1, Number(partesData[2]));
+
+            if (dataSelecionada < dataHoje) {
+                alert("📅 A data de entrega não pode ser no passado.");
+                return;
+            }
+
+            if (dataSelecionada.getTime() === dataHoje.getTime()) {
+                if (horaEntrega.includes("06:00")) {
+                    alert("⏰ A entrega da Manhã Cedo (06h às 09h) exige agendamento com antecedência mínima de 1 dia.");
+                    return;
+                }
+                if (horaEntrega.includes("12:00") && horaAtual >= 10) {
+                    alert("⏰ Pedidos para a faixa da Tarde de hoje só podem ser realizados até as 10:00.");
                     return;
                 }
             }
 
-            // TRAVA 3: Regra das 36 Horas (Foto e Cartão)
+            if (dataSelecionada.getTime() === dataAmanha.getTime() && horaEntrega.includes("06:00") && horaAtual >= 20) {
+                alert("⏰ Para entregas amanhã cedo (06h às 09h), o pedido precisa ser confirmado até as 20:00 de hoje devido ao preparo artesanal.");
+                return;
+            }
+
             let temItemDemorado = false;
             let checkFoto = document.getElementById('check-foto');
             let checkCarta = document.getElementById('check-carta-impressa');
@@ -555,21 +552,15 @@
             if (checkCarta && checkCarta.checked) temItemDemorado = true;
 
             if (temItemDemorado) {
-                let partesHora = horaEntrega.split(':');
-                let dataEscolhidaObj = new Date(partesData[0], partesData[1] - 1, partesData[2], partesHora[0], partesHora[1]);
-                
-                let dataLimite36h = new Date(agora.getTime());
-                dataLimite36h.setHours(dataLimite36h.getHours() + 36); 
-
-                if (dataEscolhidaObj.getTime() < dataLimite36h.getTime()) {
-                    alert("⚠️ ALERTA DE PRODUÇÃO!\n\nVocê selecionou 'Foto' ou 'Cartão Impresso'.\nEstes itens exigem um mínimo de 36 HORAS de antecedência para produção.\n\nPor favor, altere a data/hora para daqui a 3 dias ou remova estes itens da cesta.");
+                let data3Dias = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 3);
+                if (dataSelecionada < data3Dias) {
+                    alert("⚠️ ALERTA DE PRODUÇÃO!\n\nVocê selecionou 'Foto Revelada' ou 'Cartão Impresso'.\nEstes itens exigem um mínimo de 3 DIAS de antecedência.\n\nPor favor, altere a data de entrega para daqui a 3 dias ou desmarque estes itens.");
                     return; 
                 }
             }
 
-            // --- SUCESSO: TUDO VALIDADO, MONTA O RESUMO ---
             const nomeCesta = document.getElementById('nome-produto') ? document.getElementById('nome-produto').innerText : "Cesta Personalizada";
-            const totalStr = document.getElementById('valor-total') ? document.getElementById('valor-total').innerText : document.getElementById('valor-total-exibicao').innerText;
+            const totalStr = document.getElementById('valor-total') ? document.getElementById('valor-total').innerText : "R$ 0,00";
             const entregaFormatada = dataEntregaStr.split('-').reverse().join('/');
             
             let htmlResumo = `<p><strong>Cesta:</strong> ${nomeCesta}</p>`;
@@ -654,84 +645,6 @@
         }
         document.querySelectorAll('.add-check').forEach(item => { item.addEventListener('change', atualizarTotal); });
 
-        function abrirResumo() {
-            const compNome = document.getElementById('comprador-nome').value;
-            const recNome = document.getElementById('recebedor-nome').value;
-            const numero = document.getElementById('end-numero').value;
-            
-            if (!compNome) { alert("Preencha seu nome."); return; }
-            if (!recNome) { alert("Preencha o nome de quem vai receber."); return; }
-            if (valorFrete === 0) { alert("Calcule o frete."); return; }
-            if (!numero) { alert("Preencha o número da casa."); return; }
-
-            const dataEntregaStr = document.getElementById('data-entrega').value;
-            if(!dataEntregaStr) { alert("Por favor, selecione a data de entrega."); return; }
-            
-            const horaEntrega = document.getElementById('hora-entrega').value;
-            if (!horaEntrega || horaEntrega < "07:00" || horaEntrega > "18:00") { 
-                alert("⏰ Por favor, selecione um horário válido de entrega entre 07:00 e 18:00."); 
-                return; 
-            }
-
-            // --- VALIDAÇÕES DE DATA RIGOROSAS ---
-            const agora = new Date();
-            const horaAtual = agora.getHours();
-            
-            // Criando as referências exatas (zerando as horas para comparar apenas os dias)
-            let dataHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
-            let dataAmanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
-            let data3Dias = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 3);
-
-            let partesData = dataEntregaStr.split('-');
-            let dataSelecionada = new Date(partesData[0], partesData[1] - 1, partesData[2]);
-
-            // 1. Trava de Data no Passado (Evita falhas de quem digita a data manualmente)
-            if (dataSelecionada < dataHoje) {
-                alert("📅 A data de entrega não pode ser no passado. Selecione a partir de hoje.");
-                return;
-            }
-
-            // 2. Trava de Urgência (Passou das 18h, pediu pra amanhã e não pagou a taxa)
-            if (horaAtual >= 18 && dataSelecionada.getTime() === dataAmanha.getTime()) {
-                let checkUrgencia = document.getElementById('check-urgencia');
-                if (!checkUrgencia || !checkUrgencia.checked) {
-                    alert("🚨 ATENÇÃO: Já passou das 18:00!\nPara entregas no dia de amanhã, você precisa marcar a 'Taxa de Urgência'.\nMarque a caixinha de urgência ou mude a data para depois de amanhã.");
-                    return;
-                }
-            }
-
-            // 3. Trava de 3 Dias (Foto e Cartão)
-            let temItemDemorado = false;
-            if (document.getElementById('check-foto') && document.getElementById('check-foto').checked) temItemDemorado = true;
-            if (document.getElementById('check-carta-impressa') && document.getElementById('check-carta-impressa').checked) temItemDemorado = true;
-
-            if (temItemDemorado) {
-                if (dataSelecionada < data3Dias) {
-                    alert("⚠️ ALERTA DE PRODUÇÃO!\n\nVocê selecionou 'Foto Revelada' ou 'Cartão Impresso'.\nEstes itens exigem um mínimo de 3 DIAS de antecedência.\n\nPor favor, altere a data de entrega para daqui a 3 dias ou desmarque estes itens.");
-                    return; 
-                }
-            }
-
-            // --- SUCESSO: Monta Resumo ---
-            const nomeCesta = document.getElementById('nome-produto').innerText;
-            const total = document.getElementById('valor-total').innerText;
-            const dataEntregaFormatada = dataEntregaStr.split('-').reverse().join('/');
-            
-            let htmlResumo = `
-                <p><strong>Cesta:</strong> ${nomeCesta}</p>
-                <p><strong>Total:</strong> <span style="color:#D88245; font-weight:bold;">${total}</span></p>
-                <p><strong>Para:</strong> ${recNome}</p>
-                <p><strong>Entrega:</strong> ${dataEntregaFormatada} às ${horaEntrega}</p>
-            `;
-            if (typeof taxaUrgencia !== 'undefined' && taxaUrgencia > 0) htmlResumo += `<p style="color:red; font-weight:bold;">Inclui Taxa de Urgência</p>`;
-            
-            document.getElementById('area-resumo-texto').innerHTML = htmlResumo;
-            
-            document.getElementById('modal-pedido').style.display = 'flex';
-            document.getElementById('etapa-resumo').style.display = 'block';
-            document.getElementById('etapa-pagamento').style.display = 'none';
-        }
-
         function fecharModal() { document.getElementById('modal-pedido').style.display = 'none'; }
         function irParaPagamento() { document.getElementById('etapa-resumo').style.display = 'none'; document.getElementById('etapa-pagamento').style.display = 'block'; }
         function voltarParaResumo() { document.getElementById('etapa-pagamento').style.display = 'none'; document.getElementById('etapa-resumo').style.display = 'block'; }
@@ -748,14 +661,12 @@
             navigator.clipboard.writeText(chave).then(() => alert("Chave Pix copiada!"));
         }
 
-        // --- A MÁGICA DO WHATSAPP (AGORA COM OS DADOS COMPLETOS E SEM TRAVAR) ---
         function finalizarCompraReal() {
             try {
                 const btnConfirmar = document.querySelector('#etapa-pagamento .btn-confirmar-modal');
                 btnConfirmar.innerText = "Redirecionando...";
                 btnConfirmar.disabled = true;
 
-                // 1. Coleta todos os Dados
                 const compNome = document.getElementById('comprador-nome').value || "Não informado";
                 const compZap = document.getElementById('comprador-zap').value || "";
                 const compEmail = document.getElementById('comprador-email').value || "";
@@ -778,7 +689,6 @@
                 let formaPagamento = "Pix";
                 for (var i = 0; i < radios.length; i++) { if (radios[i].checked) formaPagamento = radios[i].value; }
 
-                // 2. Coleta Adicionais e Bilhetes
                 let itensAdicionais = [];
                 let msgBilheteImpresso = "";
                 document.querySelectorAll('.add-check:checked').forEach(box => {
@@ -796,7 +706,6 @@
                 let bilheteFinal = (checkMao && txtMao ? `[Mão: "${txtMao}"] ` : "") + msgBilheteImpresso;
                 if(!bilheteFinal || bilheteFinal === "") bilheteFinal = "-";
 
-                // 3. Monta o JSON para preencher a Planilha
                 const dadosPlanilha = {
                     "Data": new Date().toLocaleString('pt-BR'),
                     "Nome": compNome, 
@@ -811,7 +720,6 @@
                     "Obs": `[${formaPagamento}] ` + obs
                 };
 
-                // 4. Monta o Texto COMPLETO para o WhatsApp
                 let zap = `👋 Olá! Gostaria de confirmar um pedido.\n\n`;
                 zap += `📦 *CESTA:* ${nomeCesta}\n`;
                 if (itensAdicionais.length > 0) { zap += `➕ *Adicionais:* ${itensAdicionais.join(', ')}\n`; }
@@ -827,13 +735,11 @@
 
                 let linkZap = `https://wa.me/${SEU_NUMERO_ZAP}?text=${encodeURIComponent(zap)}`;
 
-                // 5. Manda para a planilha (sem travar o celular)
                 fetch(URL_GOOGLE_SHEETS, {
                     method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(dadosPlanilha)
                 }).catch(e => console.log("Planilha enviada em segundo plano."));
 
-                // 6. Redirecionamento
                 setTimeout(() => {
                     if(formaPagamento === 'PicPay') {
                         let valorLimpo = totalTexto.replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
