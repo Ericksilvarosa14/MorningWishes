@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Cesta | Morning Wish</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        :root {
+            --cor-fundo: #FDFBF7;
+            --cor-texto: #4E342E;
+            --cor-destaque: #D88245;
+            --cor-verde: #25D366;
+            --cor-cinza-btn: #808080;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Open Sans', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); padding-bottom: 120px; }
+        
+        /* --- HEADER FIXO --- */
+        header { 
+            padding: 10px 5%; 
+            background: white; 
+            border-bottom: 2px solid #eee; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            position: sticky; 
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 70px;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-img { height: 70px; width: auto; }
+        .logo-text { font-family: 'Lato', sans-serif; font-weight: bold; font-size: 1.3rem; color: var(--cor-destaque); }
+
+        .header-preco-total {
+            font-size: 1.1rem; font-weight: bold; color: var(--cor-verde);
+            background: #f0fff0; padding: 5px 15px; border-radius: 20px; border: 1px solid var(--cor-verde);
+        }
+        .voltar { text-decoration: none; color: #666; font-size: 0.9rem; font-weight: 600; }
+
+        /* --- LAYOUT PRODUTO --- */
+        .container-produto { display: flex; flex-wrap: wrap; max-width: 1200px; margin: 40px auto; padding: 0 20px; gap: 40px; }
+        .lado-foto { flex: 1; min-width: 300px; }
+        .lado-foto img { width: 100%; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); object-fit: cover; }
+        
+        .lado-info { flex: 1; min-width: 300px; }
+        h1 { font-family: 'Lato', sans-serif; font-size: 2.5rem; margin-bottom: 5px; }
+        .preco-base { font-size: 2rem; color: var(--cor-destaque); font-weight: bold; margin-bottom: 15px; display: block; }
+        .descricao { color: #666; margin-bottom: 20px; line-height: 1.8; }
+
+        /* --- ITENS INCLUSOS --- */
+        .box-itens-inclusos {
+            background: #fffdf9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px dashed var(--cor-destaque);
+            margin-bottom: 30px;
+        }
+        .box-itens-inclusos h3 { font-size: 1.1rem; color: var(--cor-destaque); margin-bottom: 10px; }
+        .lista-inclusos { list-style-type: none; padding: 0; color: #555; font-size: 0.95rem; }
+        .lista-inclusos li { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; gap: 10px; }
+        .lista-inclusos li:last-child { border-bottom: none; }
+
+        .secao-titulo { font-weight: bold; margin-bottom: 15px; display: block; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 30px; color: var(--cor-destaque); clear: both; }
+        
+        /* ADICIONAIS */
+        .opcoes-adicionais { margin-bottom: 20px; }
+        .opcao-extra { border: 1px solid #D88245; background-color: #FFFDF5; border-radius: 8px; padding: 15px; margin: 10px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .opcao-extra:hover { background-color: #fcefdc; }
+        .texto-extra { font-weight: 600; color: #4E342E; display: flex; align-items: center; gap: 8px; }
+        .preco-extra { font-weight: bold; color: #4E342E; }
+        .opcao-extra input { transform: scale(1.3); }
+
+        .area-mensagem { display: none; margin-top: 10px; padding: 0 5px; }
+        textarea.msg-box { width: 100%; height: 60px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; resize: none; }
+        .aviso-foto { display: none; font-size: 0.8rem; color: #D88245; margin: -5px 0 15px 5px; font-weight: bold; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.9rem; margin-bottom: 5px; color: #666; font-weight: bold; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
+        textarea { resize: vertical; min-height: 80px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+
+        .cep-wrapper { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .cep-wrapper input { padding: 12px; border: 1px solid #ccc; border-radius: 5px; width: 60%; background: #f9f9f9; }
+        .cep-wrapper button { padding: 12px 20px; background-color: var(--cor-cinza-btn); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #msg-frete { font-size: 0.9rem; margin-bottom: 10px; display: block; }
+        .sucesso { color: green; } .erro { color: red; }
+        #endereco-detalhes { display: none; background: #fff8f0; padding: 15px; border-radius: 8px; border: 1px dashed var(--cor-destaque); margin-bottom: 20px; }
+        .linha-endereco { display: flex; gap: 10px; margin-bottom: 10px; }
+        
+        /* BARRA INFERIOR */
+        .resumo-compra { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px 5%; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 9999; border-radius: 20px 20px 0 0; border-top: 4px solid var(--cor-destaque); display: flex; align-items: center; justify-content: space-between; gap: 20px;}
+        .linha-total { display: flex; flex-direction: column; font-size: 1.1rem; color: #666; }
+        .linha-total span:last-child { font-size: 1.8rem; font-weight: bold; color: var(--cor-texto); }
+        .btn-whatsapp { background-color: var(--cor-verde); color: white; text-align: center; padding: 15px 30px; border-radius: 50px; font-weight: bold; transition: 0.3s; border: none; font-size: 1.1rem; cursor: pointer; flex: 1; max-width: 400px;}
+
+        /* MODAIS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal-titulo { font-size: 1.5rem; color: var(--cor-destaque); font-weight: bold; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .resumo-lista p { margin-bottom: 8px; font-size: 0.95rem; color: #555; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+        .botoes-modal { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-voltar-modal { flex: 1; padding: 12px; border: 1px solid #ccc; background: white; border-radius: 50px; cursor: pointer; font-weight: bold; color: #666; }
+        .btn-confirmar-modal { flex: 1; padding: 12px; border: none; background: var(--cor-verde); border-radius: 50px; cursor: pointer; font-weight: bold; color: white; }
+
+        /* ESTILOS PAGAMENTO (VOLTOU AO ORIGINAL) */
+        .opcao-pagamento { border: none; border-radius: 0; padding: 10px 0; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .opcao-pagamento:hover { border-color: transparent; background-color: transparent; }
+        .box-pix { display: none; background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-top: 10px; border: 1px dashed #ccc; }
+        .chave-pix { font-family: monospace; background: #eee; padding: 10px; border-radius: 5px; word-break: break-all; margin: 10px 0; font-size: 0.9rem; }
+        .btn-copiar { background: #555; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        @media (max-width: 768px) {
+            .container-produto { flex-direction: column; margin-top: 20px; gap: 20px;} 
+            .header-preco-total { font-size: 0.9rem; padding: 5px 10px; }
+            h1 { font-size: 2rem; } 
+            .grid-2, .linha-endereco { grid-template-columns: 1fr; display: flex; flex-direction: column; } 
+            .resumo-compra { padding: 15px 20px; }
+            .linha-total span:last-child { font-size: 1.5rem; }
+            .btn-whatsapp { padding: 12px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="logo.jpg" alt="Morning Wish" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Morning Wish</span>
+        </a>
+        <div class="header-preco-total">
+            Total: <span id="valor-total-header">R$ 0,00</span>
+        </div>
+        <a href="index.html" class="voltar">← Voltar</a>
+    </header>
+
+    <main class="container-produto">
+        
+        <div class="lado-foto">
+            <img id="img-produto" src="" alt="Foto da Cesta">
+        </div>
+
+        <div class="lado-info">
+            <h1 id="nome-produto">Carregando...</h1>
+            <span class="preco-base" id="preco-produto">R$ 0,00</span>
+            <p class="descricao" id="desc-produto">Uma escolha perfeita para surpreender quem você ama logo pela manhã.</p>
+
+            <div class="box-itens-inclusos">
+                <h3>O que vem nesta cesta?</h3>
+                <ul class="lista-inclusos" id="lista-inclusos-ul">
+                    </ul>
+            </div>
+
+            <div class="opcoes-adicionais">
+                <span class="secao-titulo">✨ Deixe seu presente único</span>
+                
+                <label class="opcao-extra">
+                    <div class="texto-extra">
+                        <input type="checkbox" class="add-check" value="25.00" data-nome="Caneca">
+                        <span>☕ Caneca "Morning Wish"</span>
+                    </div>
+                    <span class="preco-extra">+ R$ 25,00</span>
+                </label>
+
+                <label class="opcao-extra">
+                    <div class="texto-extra">
+                        <input type="checkbox" class="add-check" value="40.00" data-nome="Urso">
+                        <span>🧸 Urso de Pelúcia P</span>
+                    </div>
+                    <span class="preco-extra">+ R$ 40,00</span>
+                </label>
+
+                <label class="opcao-extra">
+                    <div class="texto-extra">
+                        <input type="checkbox" class="add-check" value="15.00" data-nome="Nutella">
+                        <span>🍫 Pote Nutella (140g)</span>
+                    </div>
+                    <span class="preco-extra">+ R$ 15,00</span>
+                </label>
+
+                <label class="opcao-extra" id="box-foto">
+                    <div class="texto-extra">
+                        <input type="checkbox" id="check-foto" class="add-check" value="5.00" data-nome="Foto Revelada" onchange="toggleAvisoFoto()">
+                        <span>📸 Adicionar Foto Revelada</span>
+                    </div>
+                    <span class="preco-extra">+ R$ 5,00</span>
+                </label>
+                <div id="msg-aviso-foto" class="aviso-foto">⚠️ Envie a foto pelo WhatsApp após o pagamento!</div>
+
+                <label class="opcao-extra">
+                    <div class="texto-extra">
+                        <input type="checkbox" id="check-carta-mao" onchange="mostrarCampoTexto(this, 'area-texto-carta-mao', 'mensagem-carta-mao')">
+                        <span>✍️ Bilhete escrito à mão</span>
+                    </div>
+                    <span class="preco-extra">Grátis</span>
+                </label>
+                <div id="area-texto-carta-mao" class="area-mensagem">
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Digite sua mensagem (Manuscrita):</p>
+                    <textarea id="mensagem-carta-mao" class="msg-box" maxlength="150" placeholder="Ex: Te amo muito! Tenha um bom dia." oninput="contarLetras(this, 'contador-letras-mao')"></textarea>
+                    <div style="text-align: right; font-size: 0.8rem; color: #666; margin-top: 2px;"><span id="contador-letras-mao">0</span>/150</div>
+                </div>
+
+                <label class="opcao-extra">
+                    <div class="texto-extra">
+                        <input type="checkbox" id="check-carta-impressa" class="add-check" value="3.00" data-nome="Bilhete Impresso" onchange="mostrarCampoTexto(this, 'area-texto-carta-impressa', 'mensagem-carta-impressa')">
+                        <span>🖨️ Bilhete Impresso</span>
+                    </div>
+                    <span class="preco-extra">+ R$ 3,00</span>
+                </label>
+                <div id="area-texto-carta-impressa" class="area-mensagem">
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Digite sua mensagem (Impressa):</p>
+                    <textarea id="mensagem-carta-impressa" class="msg-box" maxlength="150" placeholder="Mensagem para imprimir..." oninput="contarLetras(this, 'contador-letras-impressa')"></textarea>
+                    <div style="text-align: right; font-size: 0.8rem; color: #666; margin-top: 2px;"><span id="contador-letras-impressa">0</span>/150</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Qual o motivo do presente?</label>
+                <input type="text" id="motivo-compra" placeholder="Ex: Aniversário de Casamento, Dia das Mães...">
+            </div>
+
+            <span class="secao-titulo">👤 Seus Dados (Comprador)</span>
+            <div class="input-group"><label>Seu Nome Completo:</label><input type="text" id="comprador-nome" placeholder="Digite seu nome"></div>
+            <div class="grid-2">
+                <div class="input-group"><label>Seu WhatsApp:</label><input type="tel" id="comprador-zap" placeholder="(00) 00000-0000"></div>
+                <div class="input-group"><label>Seu E-mail:</label><input type="email" id="comprador-email" placeholder="email@exemplo.com"></div>
+            </div>
+
+            <span class="secao-titulo">🎁 Dados de Quem Vai Receber</span>
+            <div class="input-group"><label>Nome Completo da Pessoa:</label><input type="text" id="recebedor-nome" placeholder="Nome de quem vai receber a cesta"></div>
+            <div class="input-group"><label>WhatsApp da Pessoa:</label><input type="tel" id="recebedor-zap" placeholder="(00) 00000-0000"></div>
+
+            <span class="secao-titulo">📅 Agendar Entrega</span>
+            <div class="grid-2">
+                <div class="input-group"><label>Data:</label><input type="date" id="data-entrega"></div>
+                <div class="input-group"><label>Hora:</label><input type="time" id="hora-entrega"></div>
+            </div>
+
+            <label class="opcao-extra" id="box-urgencia" style="display: none; border-color: red; background: #fff0f0;">
+                <div class="texto-extra">
+                    <input type="checkbox" id="check-urgencia" onchange="toggleUrgencia(this)">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="color: red;">🚨 Entrega para Amanhã (Taxa de Urgência)</span>
+                        <span style="font-size: 0.75rem; color: #888;">Seu pedido passou das 18h. Marque para liberar amanhã.</span>
+                    </div>
+                </div>
+                <span class="preco-extra" style="color: red;">+ R$ 20,00</span>
+            </label>
+            
+
+            <span class="secao-titulo">🚚 Endereço de Entrega</span>
+            <div class="cep-wrapper">
+                <input type="text" id="input-cep" placeholder="Insira o CEP de entrega" maxlength="9">
+                <button onclick="buscarEndereco()">OK</button>
+            </div>
+            <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" style="font-size: 0.8rem; color: #007bff; text-decoration: none;">Não sei o CEP</a>
+            <span id="msg-frete"></span>
+
+            <div id="endereco-detalhes">
+                <div class="linha-endereco">
+                    <div class="input-group" style="flex: 3;"><label>Rua / Logradouro:</label><input type="text" id="end-rua" placeholder="Rua..."></div>
+                    <div class="input-group" style="flex: 1;"><label>Número:</label><input type="text" id="end-numero" placeholder="Nº"></div>
+                </div>
+                <div class="input-group">
+                    <label>Observações de Entrega (Importante):</label>
+                    <textarea id="end-obs" placeholder="Ex: O interfone está quebrado, favor ligar. / Deixar na portaria. / É no 5º andar, bloco B."></textarea>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="resumo-compra">
+        <div class="linha-total">
+            <span>Total:</span>
+            <span id="valor-total">R$ 0,00</span>
+        </div>
+        <button onclick="abrirResumo()" class="btn-whatsapp">Finalizar Pedido</button>
+    </div>
+
+    <div id="modal-pedido" class="modal-overlay">
+        
+        <div class="modal-content" id="etapa-resumo">
+            <div class="modal-titulo">📝 Conferir Pedido</div>
+            <div id="area-resumo-texto" class="resumo-lista"></div>
+            <div class="botoes-modal">
+                <button class="btn-voltar-modal" onclick="fecharModal()">← Voltar</button>
+                <button class="btn-confirmar-modal" onclick="irParaPagamento()">Ir para Pagamento 💳</button>
+            </div>
+        </div>
+
+        <div class="modal-content" id="etapa-pagamento" style="display: none;">
+            <div class="modal-titulo">🤑 Pagamento</div>
+            <p style="text-align: center; margin-bottom: 15px; color: #666;">Escolha como pagar:</p>
+
+            <label class="opcao-pagamento" onclick="mostrarInfoPagamento('pix')">
+                <input type="radio" name="formaPagamento" value="Pix" checked>
+                <span>💠 <b>PIX</b> (Chave Aleatória/CPF)</span>
+            </label>
+            <div id="info-pix" class="box-pix" style="display: block;">
+                <p style="font-size: 0.9rem;">Copie a chave e pague no seu banco:</p>
+                <div class="chave-pix" id="chave-pix-texto">41 988506306</div> <button class="btn-copiar" onclick="copiarChavePix()">Copiar Chave</button>
+            </div>
+
+            <label class="opcao-pagamento" onclick="mostrarInfoPagamento('picpay')">
+                <input type="radio" name="formaPagamento" value="PicPay">
+                <span>💚 <b>PicPay</b> (Cartão de Crédito / Saldo)</span>
+            </label>
+            <div id="info-picpay" class="box-pix" style="display: none;">
+                <p>Ao finalizar, abriremos o <b>PicPay</b> com o valor exato.</p>
+                <p style="font-size: 0.8rem; color: #25D366;">*Aceita Cartão de Crédito.</p>
+            </div>
+
+            <label class="opcao-pagamento" onclick="mostrarInfoPagamento('stone')">
+                <input type="radio" name="formaPagamento" value="Cartão (Stone)">
+                <span>💳 <b>Cartão Crédito/Débito</b> (Stone)</span>
+            </label>
+            <div id="info-stone" class="box-pix" style="display: none;">
+                <p style="font-size: 0.9rem;"><b>Opção 1:</b> Enviaremos um Link de Pagamento seguro pelo WhatsApp.</p>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px dashed #ccc;">
+                <p style="font-size: 0.9rem;"><b>Opção 2:</b> Se for entrega presencial, levamos a maquininha!</p>
+            </div>
+
+            <div class="botoes-modal">
+                <button class="btn-voltar-modal" onclick="voltarParaResumo()">← Resumo</button>
+                <button class="btn-confirmar-modal" onclick="finalizarCompraReal()">Finalizar Pedido ✅</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÕES ---
+        const URL_GOOGLE_SHEETS = "https://script.google.com/macros/s/AKfycbxJwQq4tfvHkav730vm8uIlmM662mFXQD4k9GWNUYhIFFruxM0BcUZTRlFUE28W2Q-5/exec"; 
+        const SEU_NUMERO_ZAP = "5541988506306"; 
+        const SEU_USUARIO_PICPAY = "osmorningwish"; 
+
+        function mostrarCampoTexto(checkbox, idDivArea, idInputTexto) {
+            var caixaTexto = document.getElementById(idDivArea);
+            var inputTexto = document.getElementById(idInputTexto);
+            if (checkbox.checked) {
+                caixaTexto.style.display = 'block';
+                inputTexto.focus(); 
+            } else {
+                caixaTexto.style.display = 'none';
+                inputTexto.value = ''; 
+                var contador = caixaTexto.querySelector('span[id^="contador"]');
+                if(contador) contador.innerText = '0';
+            }
+            atualizarTotal();
+        }
+
+        function contarLetras(input, idContador) {
+            var contador = document.getElementById(idContador);
+            var qtd = input.value.length;
+            contador.innerText = qtd;
+            if (qtd === 50 || qtd === 150) { contador.style.color = "red"; contador.style.fontWeight = "bold"; } 
+            else { contador.style.color = "#666"; contador.style.fontWeight = "normal"; }
+        }
+
+        function toggleAvisoFoto() {
+            var checkbox = document.getElementById('check-foto');
+            var aviso = document.getElementById('msg-aviso-foto');
+            if(checkbox.checked) { aviso.style.display = 'block'; } else { aviso.style.display = 'none'; }
+            atualizarTotal();
+        }
+
+       // --- BANCO DE DADOS DAS CESTAS ---
+        const dadosCestas = {
+            "despertar": { 
+                nome: "Cesta Despertar", preco: 89.90, 
+                img: "Despertada.jpeg", // <-- O NOME AQUI TEM QUE SER IDÊNTICO AO DA PASTA
+                itens: [
+                    "🍓 Frutas (Uvas ou Morangos)", 
+                    "☕ Café Soluvel", 
+                    "🧇 Waffle (1 un)", 
+                    "🫓 Pão de queijo",
+                    "🍇 Suco de uva",
+                    "🍰 Bolo (Laranja ou Fubá)",
+                    "🧀 Requeijão",
+                    "🍯 Doce de leite",
+                    "🍪 Biscoito amanteigado",
+                    "🍪 Biscoito Goiabinha"
+                ]
+            },
+            "amanhecer": { 
+                nome: "Amanhecer Kids", preco: 99.90, 
+                img: "Kids editada.jpeg", // <-- O NOME AQUI TEM QUE SER IDÊNTICO AO DA PASTA
+                itens: [
+                    "🍓 Frutas", 
+                    "🧇 Waffle", 
+                    "🫓 Pão de queijo",
+                    "🧃 Suco ou ChocoMilk",
+                    "☁️ Marshmallow",
+                    "🍯 Doce de Leite",
+                    "🧀 Requeijão",
+                    "🍬 Bala de goma",
+                    "🍫 Confete",
+                    "🍪 Biscoito amanteigado",
+                    "🍪 Biscoito Goiabinha",
+                    "🍯 Brigadeiro"
+                ]
+            }, 
+            "duo": { 
+                nome: "Cesta Duo (Para Duas Pessoas)", preco: 169.90, 
+                img: "para 2 editada.jpeg", // <-- O NOME AQUI TEM QUE SER IDÊNTICO AO DA PASTA
+                itens: [
+                    "🍓 Frutas", 
+                    "☕ Café Soluvel", 
+                    "☕ Cappuccino",
+                    "🍇 Suco de uva e laranja",
+                    "🧇 Waffle (2 un)", 
+                    "🫓 Pão de queijo",
+                    "🥖 Pão Australiano (1 un)",
+                    "🍞 Torradas",
+                    "🧀 Requeijão",
+                    "🍯 Doce de leite",
+                    "🍪 Biscoito Goiabinha",
+                    "🍪 Biscoito amanteigado",
+                    "✨ Luz de Led"
+                ]
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        let idAtual = params.get('id') || "despertar";
+        if (!dadosCestas[idAtual]) idAtual = "despertar";
+
+        const produto = dadosCestas[idAtual];
+        let precoBase = produto.preco;
+        let valorFrete = 0;
+        let taxaUrgencia = 0;
+        let bairroEncontrado = "";
+
+        // --- SISTEMA DE REGRAS DE DATA/HORA E URGÊNCIA ---
+       // --- SISTEMA DE REGRAS DE DATA/HORA E URGÊNCIA ---
+       // --- FUNÇÃO ANTI-BUG DO SAFARI/CELULAR ---
+        function formatarDataLocal(dataObj) {
+            let ano = dataObj.getFullYear();
+            let mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+            let dia = String(dataObj.getDate()).padStart(2, '0');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        // --- SISTEMA DE REGRAS DE DATA/HORA E URGÊNCIA ---
+        window.onload = function() {
+            const inputData = document.getElementById('data-entrega');
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            
+            let amanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
+            let depoisDeAmanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 2);
+
+            const boxUrgencia = document.getElementById('box-urgencia');
+
+            if (horaAtual >= 18) {
+                inputData.min = formatarDataLocal(depoisDeAmanha); 
+                if (boxUrgencia) boxUrgencia.style.display = 'flex';
+            } else {
+                inputData.min = formatarDataLocal(amanha); 
+                if (boxUrgencia) boxUrgencia.style.display = 'none';
+            }
+        };
+
+        function toggleUrgencia(checkbox) {
+            const inputData = document.getElementById('data-entrega');
+            let agora = new Date();
+            let amanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
+            let depois = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 2);
+
+            if (checkbox.checked) {
+                taxaUrgencia = 20.00;
+                inputData.min = formatarDataLocal(amanha);
+            } else {
+                taxaUrgencia = 0;
+                inputData.min = formatarDataLocal(depois); 
+                if(inputData.value === formatarDataLocal(amanha)) {
+                    inputData.value = ""; 
+                }
+            }
+            if (typeof atualizarTotal === "function") atualizarTotal();
+            if (typeof atualizarTotalBase === "function") atualizarTotalBase();
+        }
+
+        // --- ABRIR RESUMO E VALIDAÇÕES RÍGIDAS ---
+        function abrirResumo() {
+            // Se estiver na personalizada, checa a quantidade de itens
+            if (document.querySelectorAll('.check-item').length > 0) {
+                const qtdItens = document.querySelectorAll('.check-item:checked').length;
+                if (qtdItens === 0) { alert("Escolha pelo menos 1 item para sua cesta!"); return; }
+            }
+
+            const compNome = document.getElementById('comprador-nome').value;
+            const recNome = document.getElementById('recebedor-nome').value;
+            const numero = document.getElementById('end-numero').value;
+            
+            if (!compNome) { alert("Preencha seu nome."); return; }
+            if (!recNome) { alert("Preencha o nome de quem vai receber."); return; }
+            if (typeof valorFrete !== 'undefined' && valorFrete === 0) { alert("Calcule o frete."); return; }
+            if (!numero) { alert("Preencha o número da casa."); return; }
+
+            const dataEntregaStr = document.getElementById('data-entrega').value;
+            if(!dataEntregaStr) { alert("Por favor, selecione a data de entrega."); return; }
+            
+            const horaEntrega = document.getElementById('hora-entrega').value;
+            if (!horaEntrega || horaEntrega < "07:00" || horaEntrega > "18:00") { 
+                alert("⏰ Por favor, selecione um horário válido de entrega entre 07:00 e 18:00."); 
+                return; 
+            }
+
+            // --- VALIDAÇÕES MATEMÁTICAS BLINDADAS ---
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            
+            let dataHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+            let dataAmanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
+
+            let partesData = dataEntregaStr.split('-');
+            let dataSelecionada = new Date(partesData[0], partesData[1] - 1, partesData[2]);
+
+            // TRAVA 1: Impede pedido para o mesmo dia ou no passado (burlar o calendário)
+            if (dataSelecionada.getTime() <= dataHoje.getTime()) {
+                alert("📅 Não fazemos entregas no mesmo dia. A entrega deve ser agendada no mínimo para amanhã.");
+                return;
+            }
+
+            // TRAVA 2: Passou das 18h, tentou pedir pra amanhã e não marcou urgência
+            if (horaAtual >= 18 && dataSelecionada.getTime() === dataAmanha.getTime()) {
+                let checkUrgencia = document.getElementById('check-urgencia');
+                if (!checkUrgencia || !checkUrgencia.checked) {
+                    alert("🚨 ATENÇÃO: Já passou das 18:00!\nPara entregas no dia de amanhã, você precisa marcar a 'Taxa de Urgência'.\nMarque a caixinha vermelha de urgência ou mude a data para depois de amanhã.");
+                    return;
+                }
+            }
+
+            // TRAVA 3: Regra das 36 Horas (Foto e Cartão)
+            let temItemDemorado = false;
+            let checkFoto = document.getElementById('check-foto');
+            let checkCarta = document.getElementById('check-carta-impressa');
+            
+            if (checkFoto && checkFoto.checked) temItemDemorado = true;
+            if (checkCarta && checkCarta.checked) temItemDemorado = true;
+
+            if (temItemDemorado) {
+                let partesHora = horaEntrega.split(':');
+                let dataEscolhidaObj = new Date(partesData[0], partesData[1] - 1, partesData[2], partesHora[0], partesHora[1]);
+                
+                let dataLimite36h = new Date(agora.getTime());
+                dataLimite36h.setHours(dataLimite36h.getHours() + 36); 
+
+                if (dataEscolhidaObj.getTime() < dataLimite36h.getTime()) {
+                    alert("⚠️ ALERTA DE PRODUÇÃO!\n\nVocê selecionou 'Foto' ou 'Cartão Impresso'.\nEstes itens exigem um mínimo de 36 HORAS de antecedência para produção.\n\nPor favor, altere a data/hora para daqui a 3 dias ou remova estes itens da cesta.");
+                    return; 
+                }
+            }
+
+            // --- SUCESSO: TUDO VALIDADO, MONTA O RESUMO ---
+            const nomeCesta = document.getElementById('nome-produto') ? document.getElementById('nome-produto').innerText : "Cesta Personalizada";
+            const totalStr = document.getElementById('valor-total') ? document.getElementById('valor-total').innerText : document.getElementById('valor-total-exibicao').innerText;
+            const entregaFormatada = dataEntregaStr.split('-').reverse().join('/');
+            
+            let htmlResumo = `<p><strong>Cesta:</strong> ${nomeCesta}</p>`;
+            
+            if (document.querySelectorAll('.check-item:checked').length > 0) {
+                let lista = [];
+                document.querySelectorAll('.check-item:checked').forEach(box => lista.push(box.getAttribute('data-nome')));
+                htmlResumo += `<p><strong>Itens:</strong> ${lista.join(', ')}</p>`;
+            }
+
+            htmlResumo += `
+                <p><strong>Para:</strong> ${recNome}</p>
+                <p><strong>Entrega:</strong> ${entregaFormatada} às ${horaEntrega}</p>
+                <p><strong>Total:</strong> <span style="color:#D88245; font-weight:bold;">${totalStr}</span></p>
+            `;
+
+            if (typeof taxaUrgencia !== 'undefined' && taxaUrgencia > 0) htmlResumo += `<p style="color:red; font-weight:bold;">Inclui Taxa de Urgência</p>`;
+
+            document.getElementById('area-resumo-texto').innerHTML = htmlResumo;
+            document.getElementById('modal-pedido').style.display = 'flex';
+            document.getElementById('etapa-resumo').style.display = 'block';
+            document.getElementById('etapa-pagamento').style.display = 'none';
+        }
+
+        // PREENCHE A TELA
+        document.getElementById('nome-produto').innerText = produto.nome;
+        document.getElementById('preco-produto').innerText = precoBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        document.getElementById('img-produto').src = produto.img; 
+        
+        // PREENCHE A LISTA DE ITENS
+        const ulItens = document.getElementById('lista-inclusos-ul');
+        ulItens.innerHTML = ""; 
+        if (produto.itens) {
+            produto.itens.forEach(item => {
+                let li = document.createElement('li');
+                li.innerText = item;
+                ulItens.appendChild(li);
+            });
+        }
+
+        atualizarTotal();
+
+        function buscarEndereco() {
+            let cep = document.getElementById('input-cep').value.replace(/\D/g, '');
+            let msg = document.getElementById('msg-frete');
+            let divDetalhes = document.getElementById('endereco-detalhes');
+
+            if (cep.length !== 8) {
+                msg.innerHTML = "<span class='erro'>CEP inválido.</span>";
+                divDetalhes.style.display = 'none'; return;
+            }
+            msg.innerText = "Buscando...";
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        msg.innerHTML = "<span class='erro'>CEP não encontrado!</span>";
+                        valorFrete = 0; divDetalhes.style.display = 'none';
+                    } else {
+                        valorFrete = 15.00; 
+                        bairroEncontrado = data.bairro;
+                        document.getElementById('end-rua').value = data.logradouro;
+                        document.getElementById('end-numero').focus();
+                        msg.innerHTML = `<span class='sucesso'>Entrega: <b>${data.bairro}</b> (+ R$ 15,00)</span>`;
+                        divDetalhes.style.display = 'block';
+                    }
+                    atualizarTotal();
+                })
+                .catch(error => {
+                    msg.innerHTML = "<span class='erro'>Erro ao buscar CEP.</span>";
+                    divDetalhes.style.display = 'none';
+                });
+        }
+
+        function atualizarTotal() {
+            let total = precoBase;
+            document.querySelectorAll('.add-check:checked').forEach(box => { total += parseFloat(box.value); });
+            total += valorFrete + taxaUrgencia;
+            let valorFormatado = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('valor-total').innerText = valorFormatado;
+            document.getElementById('valor-total-header').innerText = valorFormatado;
+        }
+        document.querySelectorAll('.add-check').forEach(item => { item.addEventListener('change', atualizarTotal); });
+
+        function abrirResumo() {
+            const compNome = document.getElementById('comprador-nome').value;
+            const recNome = document.getElementById('recebedor-nome').value;
+            const numero = document.getElementById('end-numero').value;
+            
+            if (!compNome) { alert("Preencha seu nome."); return; }
+            if (!recNome) { alert("Preencha o nome de quem vai receber."); return; }
+            if (valorFrete === 0) { alert("Calcule o frete."); return; }
+            if (!numero) { alert("Preencha o número da casa."); return; }
+
+            const dataEntregaStr = document.getElementById('data-entrega').value;
+            if(!dataEntregaStr) { alert("Por favor, selecione a data de entrega."); return; }
+            
+            const horaEntrega = document.getElementById('hora-entrega').value;
+            if (!horaEntrega || horaEntrega < "07:00" || horaEntrega > "18:00") { 
+                alert("⏰ Por favor, selecione um horário válido de entrega entre 07:00 e 18:00."); 
+                return; 
+            }
+
+            // --- VALIDAÇÕES DE DATA RIGOROSAS ---
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            
+            // Criando as referências exatas (zerando as horas para comparar apenas os dias)
+            let dataHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+            let dataAmanha = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1);
+            let data3Dias = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 3);
+
+            let partesData = dataEntregaStr.split('-');
+            let dataSelecionada = new Date(partesData[0], partesData[1] - 1, partesData[2]);
+
+            // 1. Trava de Data no Passado (Evita falhas de quem digita a data manualmente)
+            if (dataSelecionada < dataHoje) {
+                alert("📅 A data de entrega não pode ser no passado. Selecione a partir de hoje.");
+                return;
+            }
+
+            // 2. Trava de Urgência (Passou das 18h, pediu pra amanhã e não pagou a taxa)
+            if (horaAtual >= 18 && dataSelecionada.getTime() === dataAmanha.getTime()) {
+                let checkUrgencia = document.getElementById('check-urgencia');
+                if (!checkUrgencia || !checkUrgencia.checked) {
+                    alert("🚨 ATENÇÃO: Já passou das 18:00!\nPara entregas no dia de amanhã, você precisa marcar a 'Taxa de Urgência'.\nMarque a caixinha de urgência ou mude a data para depois de amanhã.");
+                    return;
+                }
+            }
+
+            // 3. Trava de 3 Dias (Foto e Cartão)
+            let temItemDemorado = false;
+            if (document.getElementById('check-foto') && document.getElementById('check-foto').checked) temItemDemorado = true;
+            if (document.getElementById('check-carta-impressa') && document.getElementById('check-carta-impressa').checked) temItemDemorado = true;
+
+            if (temItemDemorado) {
+                if (dataSelecionada < data3Dias) {
+                    alert("⚠️ ALERTA DE PRODUÇÃO!\n\nVocê selecionou 'Foto Revelada' ou 'Cartão Impresso'.\nEstes itens exigem um mínimo de 3 DIAS de antecedência.\n\nPor favor, altere a data de entrega para daqui a 3 dias ou desmarque estes itens.");
+                    return; 
+                }
+            }
+
+            // --- SUCESSO: Monta Resumo ---
+            const nomeCesta = document.getElementById('nome-produto').innerText;
+            const total = document.getElementById('valor-total').innerText;
+            const dataEntregaFormatada = dataEntregaStr.split('-').reverse().join('/');
+            
+            let htmlResumo = `
+                <p><strong>Cesta:</strong> ${nomeCesta}</p>
+                <p><strong>Total:</strong> <span style="color:#D88245; font-weight:bold;">${total}</span></p>
+                <p><strong>Para:</strong> ${recNome}</p>
+                <p><strong>Entrega:</strong> ${dataEntregaFormatada} às ${horaEntrega}</p>
+            `;
+            if (typeof taxaUrgencia !== 'undefined' && taxaUrgencia > 0) htmlResumo += `<p style="color:red; font-weight:bold;">Inclui Taxa de Urgência</p>`;
+            
+            document.getElementById('area-resumo-texto').innerHTML = htmlResumo;
+            
+            document.getElementById('modal-pedido').style.display = 'flex';
+            document.getElementById('etapa-resumo').style.display = 'block';
+            document.getElementById('etapa-pagamento').style.display = 'none';
+        }
+
+        function fecharModal() { document.getElementById('modal-pedido').style.display = 'none'; }
+        function irParaPagamento() { document.getElementById('etapa-resumo').style.display = 'none'; document.getElementById('etapa-pagamento').style.display = 'block'; }
+        function voltarParaResumo() { document.getElementById('etapa-pagamento').style.display = 'none'; document.getElementById('etapa-resumo').style.display = 'block'; }
+
+        function mostrarInfoPagamento(tipo) {
+            document.getElementById('info-pix').style.display = 'none';
+            document.getElementById('info-picpay').style.display = 'none';
+            document.getElementById('info-stone').style.display = 'none';
+            document.getElementById('info-' + tipo).style.display = 'block';
+        }
+
+        function copiarChavePix() {
+            const chave = document.getElementById('chave-pix-texto').innerText;
+            navigator.clipboard.writeText(chave).then(() => alert("Chave Pix copiada!"));
+        }
+
+        // --- A MÁGICA DO WHATSAPP (AGORA COM OS DADOS COMPLETOS E SEM TRAVAR) ---
+        function finalizarCompraReal() {
+            try {
+                const btnConfirmar = document.querySelector('#etapa-pagamento .btn-confirmar-modal');
+                btnConfirmar.innerText = "Redirecionando...";
+                btnConfirmar.disabled = true;
+
+                // 1. Coleta todos os Dados
+                const compNome = document.getElementById('comprador-nome').value || "Não informado";
+                const compZap = document.getElementById('comprador-zap').value || "";
+                const compEmail = document.getElementById('comprador-email').value || "";
+                const motivo = document.getElementById('motivo-compra').value || "";
+                
+                const recNome = document.getElementById('recebedor-nome').value || "Não informado";
+                const recZap = document.getElementById('recebedor-zap').value || "";
+                
+                const nomeCesta = document.getElementById('nome-produto').innerText;
+                const totalTexto = document.getElementById('valor-total').innerText; 
+                const obs = document.getElementById('end-obs').value || "";
+                const rua = document.getElementById('end-rua').value || "";
+                const numero = document.getElementById('end-numero').value || "";
+                
+                let dataEntrega = document.getElementById('data-entrega').value;
+                dataEntrega = dataEntrega ? dataEntrega.split('-').reverse().join('/') : "A combinar";
+                const horaEntrega = document.getElementById('hora-entrega').value || "A combinar";
+
+                const radios = document.getElementsByName('formaPagamento');
+                let formaPagamento = "Pix";
+                for (var i = 0; i < radios.length; i++) { if (radios[i].checked) formaPagamento = radios[i].value; }
+
+                // 2. Coleta Adicionais e Bilhetes
+                let itensAdicionais = [];
+                let msgBilheteImpresso = "";
+                document.querySelectorAll('.add-check:checked').forEach(box => {
+                    let nomeItem = box.getAttribute('data-nome');
+                    if(nomeItem === "Foto Revelada") { itensAdicionais.push("Foto"); }
+                    else if(nomeItem === "Bilhete Impresso") {
+                        let txt = document.getElementById('mensagem-carta-impressa').value;
+                        msgBilheteImpresso = txt ? `[Impresso: "${txt}"]` : "[Impresso]";
+                    } else { itensAdicionais.push(nomeItem); }
+                });
+                
+                const txtMao = document.getElementById('mensagem-carta-mao') ? document.getElementById('mensagem-carta-mao').value : "";
+                const checkMao = document.getElementById('check-carta-mao') ? document.getElementById('check-carta-mao').checked : false;
+                
+                let bilheteFinal = (checkMao && txtMao ? `[Mão: "${txtMao}"] ` : "") + msgBilheteImpresso;
+                if(!bilheteFinal || bilheteFinal === "") bilheteFinal = "-";
+
+                // 3. Monta o JSON para preencher a Planilha
+                const dadosPlanilha = {
+                    "Data": new Date().toLocaleString('pt-BR'),
+                    "Nome": compNome, 
+                    "Telefone": compZap, 
+                    "Email": compEmail,
+                    "Cesta": nomeCesta, 
+                    "Adicionais": itensAdicionais.join(", ") || "-",
+                    "Bilhete": bilheteFinal, 
+                    "Recebedor": recNome, 
+                    "Total": totalTexto,
+                    "Endereco": `${rua}, ${numero} - ${bairroEncontrado}`,
+                    "Obs": `[${formaPagamento}] ` + obs
+                };
+
+                // 4. Monta o Texto COMPLETO para o WhatsApp
+                let zap = `👋 Olá! Gostaria de confirmar um pedido.\n\n`;
+                zap += `📦 *CESTA:* ${nomeCesta}\n`;
+                if (itensAdicionais.length > 0) { zap += `➕ *Adicionais:* ${itensAdicionais.join(', ')}\n`; }
+                if (motivo) { zap += `🎉 *Motivo:* ${motivo}\n`; }
+                if (bilheteFinal !== "-") { zap += `\n💌 *CARTÃO:*\n${bilheteFinal}\n`; }
+                if (taxaUrgencia > 0) { zap += `\n🚨 *INCLUI TAXA DE URGÊNCIA*\n`; }
+                zap += `\n👤 *COMPRADOR:*\nNome: ${compNome}\nTel: ${compZap}\n`;
+                if(compEmail) zap += `Email: ${compEmail}\n`;
+                zap += `\n🎁 *DESTINATÁRIO:*\nNome: ${recNome}\nTel: ${recZap}\n`;
+                zap += `\n🚚 *ENTREGA:*\n📅 Data: ${dataEntrega}\n⏰ Hora: ${horaEntrega}\n📍 ${rua}, ${numero}\n🗺️ ${bairroEncontrado}\n`;
+                if(obs) zap += `⚠️ *Obs:* ${obs}\n`;
+                zap += `\n💰 *VALOR FINAL:* ${totalTexto} (${formaPagamento})`;
+
+                let linkZap = `https://wa.me/${SEU_NUMERO_ZAP}?text=${encodeURIComponent(zap)}`;
+
+                // 5. Manda para a planilha (sem travar o celular)
+                fetch(URL_GOOGLE_SHEETS, {
+                    method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(dadosPlanilha)
+                }).catch(e => console.log("Planilha enviada em segundo plano."));
+
+                // 6. Redirecionamento
+                setTimeout(() => {
+                    if(formaPagamento === 'PicPay') {
+                        let valorLimpo = totalTexto.replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
+                        window.open(`https://picpay.me/${SEU_USUARIO_PICPAY}/${valorLimpo}`, '_blank');
+                    }
+                    window.location.href = linkZap;
+                }, 800);
+
+            } catch (error) {
+                console.error("Erro interno:", error);
+                alert("Ocorreu um erro no redirecionamento, mas vamos tentar abrir o WhatsApp!");
+                window.location.href = `https://wa.me/${SEU_NUMERO_ZAP}?text=Olá, tentei finalizar um pedido mas o site travou.`;
+            }
+        }
+    </script>
+</body>
+</html>

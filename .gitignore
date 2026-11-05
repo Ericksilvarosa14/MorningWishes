@@ -1,0 +1,25 @@
+# Common temporary files and directories
+.env
+.vscode/
+node_modules/
+dist/
+build/
+coverage/
+tmp/
+temp/
+log/
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+desktop.ini
+# macOS
+.idea/
+.project
+.classpath
+.settings/
+.cache/
+.history/
