@@ -241,7 +241,13 @@
             <span class="secao-titulo">📅 Agendar Entrega</span>
             <div class="grid-2">
                 <div class="input-group"><label>Data:</label><input type="date" id="data-entrega"></div>
-                <div class="input-group"><label>Hora:</label><input type="time" id="hora-entrega"></div>
+                <div class="input-group">
+                    <label>Faixa de Horário:</label>
+                    <select id="hora-entrega" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: white; color: var(--cor-texto);">
+                        <option value="Manhã Cedo (06:00 às 09:00)">Manhã Cedo (06:00 às 09:00)</option>
+                        <option value="Tarde (12:00 às 15:00)">Tarde (12:00 às 15:00)</option>
+                    </select>
+                </div>
             </div>
 
             <label class="opcao-extra" id="box-urgencia" style="display: none; border-color: red; background: #fff0f0;">
@@ -372,11 +378,11 @@
             atualizarTotal();
         }
 
-       // --- BANCO DE DADOS DAS CESTAS ---
+        // --- BANCO DE DADOS DAS CESTAS ---
         const dadosCestas = {
             "despertar": { 
                 nome: "Cesta Despertar", preco: 89.90, 
-                img: "Despertada.jpeg", // <-- O NOME AQUI TEM QUE SER IDÊNTICO AO DA PASTA
+                img: "DespertarImg.jpeg",
                 itens: [
                     "🍓 Frutas (Uvas ou Morangos)", 
                     "☕ Café Soluvel", 
@@ -392,7 +398,7 @@
             },
             "amanhecer": { 
                 nome: "Amanhecer Kids", preco: 99.90, 
-                img: "Kids editada.jpeg", // <-- O NOME AQUI TEM QUE SER IDÊNTICO AO DA PASTA
+                img: "kids-editada.jpeg",
                 itens: [
                     "🍓 Frutas", 
                     "🧇 Waffle", 
@@ -410,7 +416,7 @@
             }, 
             "duo": { 
                 nome: "Cesta Duo (Para Duas Pessoas)", preco: 169.90, 
-                img: "para 2 editada.jpeg", // <-- O NOME AQUI TEM QUE SER IDÊNTICO AO DA PASTA
+                img: "para-2-editada.jpeg",
                 itens: [
                     "🍓 Frutas", 
                     "☕ Café Soluvel", 

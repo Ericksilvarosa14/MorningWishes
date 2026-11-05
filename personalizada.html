@@ -200,7 +200,7 @@
         <span class="secao-titulo">🚚 Dados e Horários de Entrega</span>
         
         <div class="box-avisos-entrega">
-            <p><strong>🕒 Horário de Entrega:</strong> Apenas das 07:00 às 18:00.</p>
+            <p><strong>🕒 Faixas de Entrega:</strong> Manhã Cedo (06:00 às 09:00) ou Tarde (12:00 às 15:00).</p>
             <p><strong>⏳ Entregas Padrão:</strong> Pedidos feitos até as 18:00 podem ser entregues amanhã.</p>
             <p><strong>⚠️ Fotos e Cartões Impressos:</strong> Requerem <strong>36 horas</strong> de antecedência para produção.</p>
         </div>
@@ -222,7 +222,13 @@
 
         <div class="grid-2">
             <div class="input-group"><label>Data da Entrega:</label><input type="date" id="data-entrega"></div>
-            <div class="input-group"><label>Hora da Entrega:</label><input type="time" id="hora-entrega" min="07:00" max="18:00"></div>
+            <div class="input-group">
+                <label>Faixa de Horário:</label>
+                <select id="hora-entrega" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: white; color: var(--cor-texto);">
+                    <option value="Manhã Cedo (06:00 às 09:00)">Manhã Cedo (06:00 às 09:00)</option>
+                    <option value="Tarde (12:00 às 15:00)">Tarde (12:00 às 15:00)</option>
+                </select>
+            </div>
         </div>
 
         <label class="opcao-extra" id="box-urgencia" style="display: none; border-color: red; background: #fff0f0;">
