@@ -1,13 +1,24 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Morning Wish | Painel de Pedidos</title>
-    
+    <title>Morning Wish | Cestas de Café da Manhã em Curitiba</title>
+    <meta name="description" content="Cestas de café da manhã artesanais com entrega agendada em Curitiba e Região Metropolitana. Escolha uma cesta pronta ou monte a sua.">
+
+    <!-- Compartilhamento (WhatsApp, Instagram, Facebook) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Morning Wish | Cestas de Café da Manhã">
+    <meta property="og:description" content="Surpreenda alguém especial logo cedo. Entregas em Curitiba e Região.">
+    <meta property="og:image" content="https://morningwishes.vercel.app/DespertarImg.jpeg">
+    <meta property="og:url" content="https://morningwishes.vercel.app/">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="theme-color" content="#D88245">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -15,152 +26,284 @@
             --cor-texto: #4E342E;
             --cor-destaque: #D88245;
             --cor-destaque-hover: #b86b35;
+            --cor-verde: #25D366;
             --cor-branco: #ffffff;
             --sombra-card: 0 4px 15px rgba(78, 52, 46, 0.1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body { font-family: 'Open Sans', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); line-height: 1.6; }
         h1, h2, h3 { font-family: 'Lato', sans-serif; font-weight: 700; }
         a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; }
+        section[id] { scroll-margin-top: 80px; }
 
+        /* HEADER */
         header { padding: 10px 5%; background: var(--cor-branco); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; height: 70px; }
-        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo-img { height: 70px; width: auto; }
-        .logo-text { font-size: 1.5rem; color: var(--cor-destaque); font-weight: bold; }
-        nav ul { display: flex; gap: 20px; list-style: none; }
-        
-        .hero { background-image: linear-gradient(rgba(78, 52, 46, 0.7), rgba(78, 52, 46, 0.7)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3'); background-size: cover; background-position: center; height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; padding: 20px; }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .btn-cta { background: var(--cor-destaque); color: white; padding: 15px 40px; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.3s; cursor: pointer; border: none; font-size: 1.1rem; }
-        .btn-cta:hover { background: var(--cor-destaque-hover); transform: translateY(-3px); }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-img { height: 50px; width: auto; }
+        .logo-text { font-family: 'Lato', sans-serif; font-size: 1.5rem; color: var(--cor-destaque); font-weight: bold; }
+        nav ul { display: flex; gap: 22px; list-style: none; align-items: center; }
+        nav a { font-weight: 600; font-size: 0.95rem; transition: color .2s; }
+        nav a:hover { color: var(--cor-destaque); }
+        .nav-cta { background: var(--cor-destaque); color: #fff !important; padding: 8px 18px; border-radius: 50px; }
+        .nav-cta:hover { background: var(--cor-destaque-hover); }
 
-        .produtos { padding: 40px 5%; text-align: center; }
+        /* HERO */
+        .hero { background-image: linear-gradient(rgba(78, 52, 46, 0.72), rgba(78, 52, 46, 0.72)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=70'); background-size: cover; background-position: center; min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; padding: 40px 20px; }
+        .hero-marca { font-family: 'Lato', sans-serif; letter-spacing: 3px; text-transform: uppercase; font-size: 0.9rem; opacity: .9; margin-bottom: 10px; }
+        .hero h1 { font-size: 3rem; line-height: 1.15; margin-bottom: 1rem; max-width: 760px; }
+        .hero p { font-size: 1.15rem; max-width: 560px; margin-bottom: 28px; opacity: .95; }
+        .hero-botoes { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .btn-cta { display: inline-block; background: var(--cor-destaque); color: white; padding: 15px 40px; border-radius: 50px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.3s; font-size: 1.1rem; }
+        .btn-cta:hover { background: var(--cor-destaque-hover); transform: translateY(-3px); }
+        .btn-cta-sec { background: transparent; border: 2px solid #fff; box-shadow: none; }
+        .btn-cta-sec:hover { background: rgba(255,255,255,.15); }
+
+        /* DESTAQUES */
+        .highlights { padding: 40px 5%; background-color: #f8f5f0; }
+        .highlights-grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .highlight { flex: 1; min-width: 250px; max-width: 300px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--cor-destaque); text-align: center; }
+        .highlight h3 { font-size: 1.15rem; color: var(--cor-destaque); margin-bottom: 8px; }
+        .highlight p { color: #666; }
+
+        /* PRODUTOS */
+        .produtos { padding: 50px 5%; text-align: center; }
+        .produtos h2, .faq h2, .depoimentos h2 { font-size: 2rem; }
+        .subtitulo { color: #777; margin-top: 4px; }
         .cards-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 30px; }
-        .card { background: white; border-radius: 15px; width: 300px; padding: 30px 20px; box-shadow: var(--sombra-card); border-top: 5px solid var(--cor-destaque); display: flex; flex-direction: column; justify-content: space-between; }
-        .preco { font-size: 2rem; color: var(--cor-destaque); font-weight: bold; display: block; margin: 15px 0; }
-        .img-cesta-card { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; transition: transform 0.3s ease; }
+        .card { position: relative; background: white; border-radius: 15px; width: 300px; padding: 0 0 22px; box-shadow: var(--sombra-card); border-top: 5px solid var(--cor-destaque); display: flex; flex-direction: column; overflow: hidden; transition: transform .3s, box-shadow .3s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(78,52,46,.15); }
+        .card-img-wrap { overflow: hidden; height: 220px; }
+        .img-cesta-card { width: 100%; height: 220px; object-fit: cover; display: block; transition: transform 0.3s ease; }
         .card:hover .img-cesta-card { transform: scale(1.05); }
-        .lista-itens { text-align: left; margin-bottom: 25px; color: #555; list-style: none; font-size: 0.9rem;}
+        .card-corpo { padding: 18px 20px 0; display: flex; flex-direction: column; flex: 1; }
+        .card h3 { font-size: 1.3rem; }
+        .preco { font-size: 1.8rem; color: var(--cor-destaque); font-weight: bold; display: block; margin: 4px 0 12px; }
+        .selo { position: absolute; top: 14px; left: 14px; background: var(--cor-texto); color: #fff; font-size: .75rem; font-weight: 700; padding: 4px 12px; border-radius: 50px; z-index: 2; }
+        .lista-itens { text-align: left; margin-bottom: 20px; color: #555; list-style: none; font-size: 0.9rem; }
         .lista-itens li { border-bottom: 1px dashed #eee; padding: 5px 0; }
-        
-        .btn-comprar { background-color: #25D366; color: white; padding: 12px; border-radius: 8px; font-weight: bold; display: block; margin-top: auto; cursor: pointer; text-align: center; }
+        .btn-comprar { background-color: var(--cor-verde); color: white; padding: 12px; border-radius: 8px; font-weight: bold; display: block; margin: auto 20px 0; text-align: center; transition: background .2s; }
         .btn-comprar:hover { background-color: #1ebc57; }
 
+        /* PERSONALIZADA */
         .banner-personalizada { background: linear-gradient(135deg, #FFFDF5 0%, #ffe9d6 100%); border: 2px dashed var(--cor-destaque); border-radius: 20px; padding: 40px 20px; max-width: 960px; margin: 0 auto 50px; text-align: center; box-shadow: var(--sombra-card); }
         .banner-personalizada h2 { color: var(--cor-destaque); font-size: 2.2rem; margin-bottom: 10px; }
-        .banner-personalizada p { color: #555; font-size: 1.1rem; margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;}
+        .banner-personalizada p { color: #555; font-size: 1.1rem; margin: 0 auto 25px; max-width: 600px; }
         .btn-personalizar { background-color: var(--cor-destaque); color: white; padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; display: inline-block; transition: 0.3s; }
         .btn-personalizar:hover { background-color: var(--cor-destaque-hover); transform: translateY(-3px); }
 
-        .depoimentos { background-color: #fff8f0; padding: 60px 5%; text-align: center; }
-        .depoimento-card { max-width: 600px; margin: 0 auto 20px; font-style: italic; color: #666; }
-        .autor { font-weight: bold; color: var(--cor-texto); margin-top: 5px; display: block; }
-        footer { background: var(--cor-texto); color: #FDFBF7; text-align: center; padding: 30px; }
+        /* COMO FUNCIONA / FAQ */
+        .faq { padding: 50px 5%; text-align: center; }
+        .faq-lista { max-width: 760px; margin: 25px auto 0; text-align: left; }
+        .faq details { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 12px; padding: 16px 20px; }
+        .faq summary { font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after { content: '+'; color: var(--cor-destaque); font-size: 1.3rem; line-height: 1; }
+        .faq details[open] summary::after { content: '–'; }
+        .faq details p { color: #555; margin-top: 10px; }
 
-        @media (max-width: 768px) { nav ul { display: none; } .hero h1 { font-size: 2rem; } .banner-personalizada h2 { font-size: 1.8rem; } }
+        /* DEPOIMENTOS */
+        .depoimentos { background-color: #fff8f0; padding: 60px 5%; text-align: center; }
+        .depoimento-card { max-width: 600px; margin: 25px auto 0; font-style: italic; color: #666; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .estrelas { color: #f5a623; font-style: normal; letter-spacing: 2px; display: block; margin-top: 10px; }
+        .autor { font-weight: bold; color: var(--cor-texto); font-style: normal; }
+
+        /* FOOTER */
+        footer { background: var(--cor-texto); color: #FDFBF7; padding: 40px 5% 25px; }
+        .footer-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between; max-width: 1000px; margin: 0 auto 25px; }
+        .footer-grid h4 { font-family: 'Lato', sans-serif; color: #f3c7a3; margin-bottom: 8px; }
+        .footer-grid p, .footer-grid a { font-size: .92rem; opacity: .9; display: block; }
+        .footer-grid a:hover { text-decoration: underline; }
+        .copy { text-align: center; font-size: .85rem; opacity: .7; border-top: 1px solid rgba(255,255,255,.15); padding-top: 18px; }
+
+        /* WHATSAPP FLUTUANTE */
+        .zap-flutuante { position: fixed; right: 20px; bottom: 20px; width: 58px; height: 58px; border-radius: 50%; background: var(--cor-verde); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,.25); z-index: 1500; transition: transform .2s; }
+        .zap-flutuante:hover { transform: scale(1.08); }
+        .zap-flutuante svg { width: 32px; height: 32px; fill: #fff; }
+
+        @media (max-width: 768px) {
+            .logo-text { font-size: 1.25rem; }
+            nav ul { gap: 12px; }
+            nav li.esconder-mobile { display: none; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .produtos h2, .faq h2, .depoimentos h2 { font-size: 1.6rem; }
+            .banner-personalizada h2 { font-size: 1.8rem; }
+            .btn-cta, .btn-personalizar { padding: 14px 28px; font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="#" class="logo-container">
-            <img src="logo.jpg" alt="Morning Wish" class="logo-img" onerror="this.style.display='none'">
+        <a href="#topo" class="logo-container" aria-label="Morning Wish - início">
+            <img src="logo.jpg" alt="" class="logo-img" onerror="this.remove()">
             <span class="logo-text">Morning Wish</span>
         </a>
-        <nav>
+        <nav aria-label="Menu principal">
             <ul>
-                <li><a href="#">Início</a></li>
-                <li><a href="#cestas">Cestas</a></li>
+                <li class="esconder-mobile"><a href="#cestas">Cestas</a></li>
+                <li class="esconder-mobile"><a href="personalizada.html">Monte a sua</a></li>
+                <li class="esconder-mobile"><a href="#duvidas">Dúvidas</a></li>
+                <li><a href="#cestas" class="nav-cta">Comprar</a></li>
             </ul>
         </nav>
     </header>
 
-    <section class="hero">
-        <h1>Morning Wish</h1>
-        <p>Cestas de café da manhã artesanais entregues com amor.</p>
-        <button class="btn-cta" onclick="document.getElementById('cestas').scrollIntoView();">Ver Opções</button>
-    </section>
-
-    <section class="highlights" style="padding: 40px 5%; text-align: center; background-color: #f8f8f8;">
-        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 250px; max-width: 300px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--cor-destaque);">
-                <p style="font-size: 1.2rem; font-weight: bold; color: var(--cor-destaque); margin-bottom: 10px;">🚚 Entregas em Curitiba e Região Metropolitana</p>
-                <p style="color: #666;">Levamos a alegria até você, com cuidado e pontualidade.</p>
+    <main id="topo">
+        <section class="hero">
+            <span class="hero-marca">Morning Wish</span>
+            <h1>Surpreenda quem você ama logo pela manhã ☕</h1>
+            <p>Cestas de café da manhã artesanais, montadas com carinho e entregues com hora marcada em Curitiba e Região.</p>
+            <div class="hero-botoes">
+                <a href="#cestas" class="btn-cta">Ver Cestas</a>
+                <a href="personalizada.html" class="btn-cta btn-cta-sec">Montar a Minha</a>
             </div>
-            <div style="flex: 1; min-width: 250px; max-width: 300px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--cor-destaque);">
-                <p style="font-size: 1.2rem; font-weight: bold; color: var(--cor-destaque); margin-bottom: 10px;">⏰ Pedidos agendados com antecedência</p>
-                <p style="color: #666;">Garanta seu presente perfeito com nossa flexibilidade de agendamento.</p>
+        </section>
+
+        <section class="highlights" aria-label="Diferenciais">
+            <div class="highlights-grid">
+                <div class="highlight">
+                    <h3>🚚 Curitiba e Região Metropolitana</h3>
+                    <p>Levamos a alegria até você, com cuidado e pontualidade.</p>
+                </div>
+                <div class="highlight">
+                    <h3>⏰ Entrega com hora marcada</h3>
+                    <p>Escolha o dia e a faixa: manhã cedo (6h–9h) ou tarde (12h–15h).</p>
+                </div>
+                <div class="highlight">
+                    <h3>🎁 Artesanal e selecionado</h3>
+                    <p>Qualidade e carinho em cada item, para uma experiência memorável.</p>
+                </div>
             </div>
-            <div style="flex: 1; min-width: 250px; max-width: 300px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--cor-destaque);">
-                <p style="font-size: 1.2rem; font-weight: bold; color: var(--cor-destaque); margin-bottom: 10px;">🎁 Produtos artesanais e selecionados</p>
-                <p style="color: #666;">Qualidade e carinho em cada item, para uma experiência memorável.</p>
+        </section>
+
+        <section class="produtos" id="cestas">
+            <h2>Nossas Cestas Prontas</h2>
+            <p class="subtitulo">Escolha a sua e personalize com mimos extras na próxima tela.</p>
+            <div class="cards-container">
+
+                <article class="card">
+                    <div class="card-img-wrap">
+                        <img src="DespertarImg.jpeg" alt="Cesta Despertar com waffle, frutas, pães e sucos" class="img-cesta-card" width="300" height="220" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1599423605898-d14f4e72465e?auto=format&fit=crop&w=600&q=70'">
+                    </div>
+                    <div class="card-corpo">
+                        <h3>Cesta Despertar</h3>
+                        <span class="preco">R$ 89,90</span>
+                        <ul class="lista-itens">
+                            <li>Café solúvel, Suco de uva</li>
+                            <li>Waffle, Pão de queijo, Bolo</li>
+                            <li>Frutas, Requeijão, Doce de leite</li>
+                        </ul>
+                    </div>
+                    <a href="produto.html?id=despertar" class="btn-comprar">Ver Detalhes e Comprar</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-img-wrap">
+                        <img src="kids-editada.jpeg" alt="Cesta Amanhecer Kids com doces, waffle e frutas" class="img-cesta-card" width="300" height="220" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=600&q=70'">
+                    </div>
+                    <div class="card-corpo">
+                        <h3>Cesta Amanhecer Kids</h3>
+                        <span class="preco">R$ 99,90</span>
+                        <ul class="lista-itens">
+                            <li>Suco ou ChocoMilk, Waffle</li>
+                            <li>Marshmallow, Brigadeiro, Confete</li>
+                            <li>Frutas, Pão de queijo</li>
+                        </ul>
+                    </div>
+                    <a href="produto.html?id=amanhecer" class="btn-comprar">Ver Detalhes e Comprar</a>
+                </article>
+
+                <article class="card">
+                    <span class="selo">Para dois 💛</span>
+                    <div class="card-img-wrap">
+                        <img src="para-2-editada.jpeg" alt="Cesta Nós Dois para duas pessoas" class="img-cesta-card" width="300" height="220" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1514361892635-6b07e31e75f9?auto=format&fit=crop&w=600&q=70'">
+                    </div>
+                    <div class="card-corpo">
+                        <h3>Cesta Nós Dois</h3>
+                        <span class="preco">R$ 169,90</span>
+                        <ul class="lista-itens">
+                            <li>Café e Cappuccino, Sucos</li>
+                            <li>Waffles, Pão Australiano, Torradas</li>
+                            <li>Frutas, Doces, Luz de LED</li>
+                        </ul>
+                    </div>
+                    <a href="produto.html?id=duo" class="btn-comprar">Ver Detalhes e Comprar</a>
+                </article>
+
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="produtos" id="cestas">
-        <h2>Nossas Cestas Prontas</h2>
-        <div class="cards-container">
-            
-            <div class="card">
-                <h3>Cesta Despertar</h3>
-                <span class="preco">R$ 89,90</span>
-                <img src="DespertarImg.jpeg" alt="Cesta Despertar" class="img-cesta-card" onerror="this.src='https://images.unsplash.com/photo-1599423605898-d14f4e72465e?ixlib=rb-4.0.3'">
-                <ul class="lista-itens">
-                    <li>Café solúvel, Pães artesanais</li>
-                    <li>Frutas frescas, Requeijão</li>
-                    <li>Biscoitos finos, Sucos</li>
-                </ul>
-                <a href="produto.html?id=despertar" class="btn-comprar">Ver Detalhes e Comprar</a>
+        <section style="padding: 0 5%;" aria-label="Cesta personalizada">
+            <div class="banner-personalizada">
+                <h2>✨ Personalize sua Cesta</h2>
+                <p>Quer montar do seu jeito? Escolha até 17 itens entre pães, bebidas, doces e decorações e monte o presente perfeito!</p>
+                <a href="personalizada.html" class="btn-personalizar">Montar Minha Cesta Agora 🎁</a>
             </div>
+        </section>
 
-            <div class="card">
-                <h3>Cesta Amanhecer Kids</h3>
-                <span class="preco">R$ 99,90</span>
-                <img src="kids-editada.jpeg" alt="Cesta Amanhecer Kids" class="img-cesta-card" onerror="this.src='https://images.unsplash.com/photo-1525385133512-2f3bdd039054?ixlib=rb-4.0.3'">
-                <ul class="lista-itens">
-                    <li>Achocolatado, Mini sanduíches</li>
-                    <li>Doces divertidos, Sucos</li>
-                    <li>Waffle, Frutas selecionadas</li>
-                </ul>
-                <a href="produto.html?id=amanhecer" class="btn-comprar">Ver Detalhes e Comprar</a>
+        <section class="faq" id="duvidas">
+            <h2>Como funciona</h2>
+            <div class="faq-lista">
+                <details>
+                    <summary>Com quanta antecedência preciso pedir?</summary>
+                    <p>Pedidos feitos até as 18h podem ser entregues no dia seguinte. Depois das 18h, a entrega para amanhã é possível com taxa de urgência de R$ 20,00. Itens com foto revelada ou cartão impresso precisam de 3 dias de antecedência.</p>
+                </details>
+                <details>
+                    <summary>Quais são os horários de entrega?</summary>
+                    <p>Manhã cedo (06h às 09h) ou tarde (12h às 15h). Você escolhe a data e a faixa na hora do pedido.</p>
+                </details>
+                <details>
+                    <summary>Para onde vocês entregam?</summary>
+                    <p>Curitiba e Região Metropolitana. O valor do frete é calculado automaticamente pelo CEP no momento do pedido.</p>
+                </details>
+                <details>
+                    <summary>Quais as formas de pagamento?</summary>
+                    <p>Pix, PicPay (aceita cartão de crédito) e cartão de crédito/débito por link de pagamento ou maquininha na entrega.</p>
+                </details>
+                <details>
+                    <summary>Posso escrever um recado para a pessoa?</summary>
+                    <p>Sim! O bilhete escrito à mão é grátis, e o bilhete impresso custa R$ 3,00. Você digita a mensagem no próprio pedido.</p>
+                </details>
             </div>
+        </section>
 
-            <div class="card">
-                <h3>Cesta Nós Dois</h3>
-                <span class="preco">R$ 169,90</span>
-                <img src="para-2-editada.jpeg" alt="Cesta Nós Dois" class="img-cesta-card" onerror="this.src='https://images.unsplash.com/photo-1514361892635-6b07e31e75f9?ixlib=rb-4.0.3'">
-                <ul class="lista-itens">
-                    <li>Espumante, Pães especiais</li>
-                    <li>Queijos finos, Geleia</li>
-                    <li>Frutas selecionadas, Luz de led</li>
-                </ul>
-                <a href="produto.html?id=duo" class="btn-comprar">Ver Detalhes e Comprar</a>
-            </div>
-
-        </div>
-    </section>
-
-    <section style="padding: 0 5%;">
-        <div class="banner-personalizada">
-            <h2>✨ Personalize sua Cesta</h2>
-            <p>Quer montar do seu jeito? Escolha até 17 itens entre pães, bebidas, doces e decorações e monte o presente perfeito!</p>
-            <a href="personalizada.html" class="btn-personalizar">Montar Minha Cesta Agora 🎁</a>
-        </div>
-    </section>
-
-    <section class="depoimentos">
-        <h2>O que dizem nossos clientes</h2>
-        <br>
-        <div class="depoimento-card">
-            "A cesta chegou pontualmente e os produtos eram fresquinhos. Minha esposa amou a surpresa!"
-            <span class="autor">★ ★ ★ ★ ★ - Marcos S.</span>
-        </div>
-    </section>
+        <section class="depoimentos">
+            <h2>O que dizem nossos clientes</h2>
+            <blockquote class="depoimento-card">
+                "A cesta chegou pontualmente e os produtos eram fresquinhos. Minha esposa amou a surpresa!"
+                <span class="estrelas" aria-label="5 estrelas">★★★★★</span>
+                <span class="autor">— Marcos S.</span>
+            </blockquote>
+        </section>
+    </main>
 
     <footer>
-        <p>&copy; 2026 Morning Wish. Pedidos via Formulário/WhatsApp.</p>
+        <div class="footer-grid">
+            <div>
+                <h4>Morning Wish</h4>
+                <p>Cestas de café da manhã artesanais.</p>
+                <p>Curitiba e Região Metropolitana.</p>
+            </div>
+            <div>
+                <h4>Entregas</h4>
+                <p>Manhã cedo: 06h às 09h</p>
+                <p>Tarde: 12h às 15h</p>
+            </div>
+            <div>
+                <h4>Contato</h4>
+                <a href="https://wa.me/5541988506306?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20tenho%20uma%20d%C3%BAvida." target="_blank" rel="noopener">WhatsApp: (41) 98850-6306</a>
+                <p>Pagamento: Pix, PicPay e Cartão</p>
+            </div>
+        </div>
+        <p class="copy">&copy; 2026 Morning Wish. Todos os direitos reservados.</p>
     </footer>
+
+    <a class="zap-flutuante" href="https://wa.me/5541988506306?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20tenho%20uma%20d%C3%BAvida." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3C9.4 3 4 8.4 4 15.04c0 2.12.56 4.2 1.62 6.03L4 29l8.13-1.6a12 12 0 0 0 3.9.65h.01C22.68 28.05 28 22.65 28 16.01 28 9.38 22.68 3 16.04 3zm0 22.9c-1.24 0-2.46-.23-3.6-.68l-.26-.1-4.82.95.98-4.7-.17-.27a9.9 9.9 0 0 1-1.54-5.06c0-5.48 4.46-9.94 9.95-9.94 5.48 0 9.94 4.46 9.94 9.94S21.52 25.9 16.04 25.9zm5.45-7.43c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.95 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.63-.93-2.23-.25-.59-.5-.5-.68-.51h-.58c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.08 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+    </a>
 
 </body>
 </html>
